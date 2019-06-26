@@ -19,20 +19,19 @@ def main():
     # every 5min, query http, log intensity (to file) if rain
     while True:
         curr_time = datetime.datetime.now()
-        print(curr_time)
-
+        formatted_time = curr_time.strftime('%H%M')
+        print(formatted_time)
+        
         f = urlopen(RAIN_JSON_URL)
         rain_str = f.read().decode('utf-8')
         rain_json = json.loads(rain_str)
         
         # log the entire geojson
-        base_path = str(datetime.datetime.now().date())
+        base_path = str(curr_time.date())
         if not os.path.exists(base_path):
             os.makedirs(base_path)
         
-        formatted_time = datetime.datetime.now().strftime('%H%M')
-        file_path = os.path.join(base_path, formatted_time + "." + GEOJSON_SUFFIX)
-        
+        file_path = os.path.join(base_path, formatted_time + "." + GEOJSON_SUFFIX)    
         with open(file_path, 'w+') as outfile:
             json.dump(rain_json, outfile)
             
@@ -46,7 +45,7 @@ def main():
                 print(rain_intersect) 
                 print(rain_intensity)
                 with open(RAIN_LOG_FILE, 'a+') as f:
-                    f.write(str(curr_time) + ", ")
+                    f.write(formatted_time + ", ")
                     f.write(str(rain_intensity) + "\n")
 
         time.sleep(300) # sleep 5 mins
