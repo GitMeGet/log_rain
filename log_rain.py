@@ -31,8 +31,8 @@ def main():
         if not os.path.exists(base_path):
             os.makedirs(base_path)
         
-        file_path = os.path.join(base_path, formatted_time + "." + GEOJSON_SUFFIX)    
-        with open(file_path, 'w+') as outfile:
+        geojson_file_path = os.path.join(base_path, formatted_time + "." + GEOJSON_SUFFIX)    
+        with open(geojson_file_path, 'w+') as outfile:
             json.dump(rain_json, outfile)
             
         for feature in rain_json['features']:
@@ -44,7 +44,9 @@ def main():
             if str(rain_intersect) != 'GEOMETRYCOLLECTION EMPTY':
                 print(rain_intersect) 
                 print(rain_intensity)
-                with open(RAIN_LOG_FILE, 'a+') as f:
+                
+                log_file_path = os.path.join(base_path, RAIN_LOG_FILE)
+                with open(log_file_path, 'a+') as f:
                     f.write(formatted_time + ", ")
                     f.write(str(rain_intensity) + "\n")
 
