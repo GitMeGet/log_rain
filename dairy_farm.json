@@ -1,7 +1,0 @@
-{
-    "type": "Polygon", 
-    "coordinates": [
-        [[1.362026, 103.770912], [1.359538, 103.773251], [1.362080, 103.776513], [1.363389, 103.774614], [1.362026, 103.770912]]
-    ],
-    "_comment": "first coordinate (1.362026, 103.770912) is repeated. and lol i flipped lat and long, so it's totally wrong"
-}
