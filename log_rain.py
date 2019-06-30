@@ -17,14 +17,15 @@ def main():
         df_poly = shape(dairy_farm["features"][0]["geometry"])
 
     # every 5min, query http, log intensity (to file) if rain
-    while True:
-        curr_time = datetime.datetime.now()
-        formatted_time = curr_time.strftime('%H%M')
-        print(formatted_time)
-        
+    while True:    
         f = urlopen(RAIN_JSON_URL)
         rain_str = f.read().decode('utf-8')
         rain_json = json.loads(rain_str)
+
+        # get curr_time from json["id"]
+        curr_time = datetime.datetime.strptime(rain_json["id"],'%Y%m%d%H%M')
+        formatted_time = curr_time.strftime('%H%M')
+        print(formatted_time)
         
         # log the entire geojson
         base_path = str(curr_time.date())
