@@ -12,20 +12,29 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+help_str = """for past weather, type: /how
+for more details, type: /details
+"""
+
+details_str = """Using rain cloud data (updated every 5 min) from NEA, this bot displays the times when those rain clouds intersect with a pre-defined boundaries of dairy farm climbing locations. Rain intensities range from 0 (light rain) - 100 (heavy rain)
+"""
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(update, context):
     """Send a message when the command /start is issued."""
-    update.message.reply_text("for past weather, type: /how")
+    update.message.reply_text(help_str)
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text("for past weather, type: /how")
+    update.message.reply_text(help_str)
     
 def how(update, context):
     update.message.reply_text(read_log_file())
 
+def details(update, context):
+    update.message.reply_text(details_str)
+    
 def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
@@ -44,7 +53,8 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("how", how))    
-
+    dp.add_handler(CommandHandler("details", details))
+    
     # on noncommand i.e message
 #    dp.add_handler(MessageHandler(Filters.text, reply))
 
