@@ -72,7 +72,7 @@ def read_log_file():
         with open(log_file_path, 'r') as f:
             logs = f.read()
     except:
-        return "No rained" # if log file doesn't exist
+        return "No rain" # if log file doesn't exist
         
     dedup = remove_dup(logs)
     seq_data = lump_sequential(dedup)
