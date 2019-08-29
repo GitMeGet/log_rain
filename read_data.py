@@ -1,5 +1,8 @@
-import datetime
+from datetime import datetime, timedelta
 import os
+import sqlite3
+
+RAIN_DB = "rain.db"
 
 def remove_dup(logs):
     """ Remove duplicate timings, only keep highest intensity for each timing
@@ -43,9 +46,9 @@ def lump_sequential(dedup):
         intensity = int(tuple[1])
         
         if prev_time_str != None:
-            prev_time_obj = datetime.datetime.strptime(prev_time_str, '%H%M')
-            time_obj = datetime.datetime.strptime(time_str, '%H%M')
-            is_sequential = (time_obj == (prev_time_obj + datetime.timedelta(minutes=5)))
+            prev_time_obj = datetime.strptime(prev_time_str, '%H%M')
+            time_obj = datetime.strptime(time_str, '%H%M')
+            is_sequential = (time_obj == (prev_time_obj + timedelta(minutes=5)))
         
         if prev_time_str == None or not is_sequential:
             triple_list.append((time_str, 5, intensity))
@@ -62,18 +65,23 @@ def lump_sequential(dedup):
     return triple_list
 
 def read_log_file():
-    curr_time = datetime.datetime.now()
-    date_base_path = str(curr_time.date())
-    RAIN_LOG_FILE = "rain.log"
+    today = datetime.now().isoformat(' ', 'seconds')
+    yesterday = (datetime.now() - timedelta(days=1)).isoformat(' ', 'seconds')
 
     # read from folders "today" and "yesterday"
-    log_file_path = os.path.join(date_base_path, RAIN_LOG_FILE)
-    try:
-        with open(log_file_path, 'r') as f:
-            logs = f.read()
-    except:
-        return "No rain" # if log file doesn't exist
-        
+    conn = sqlite3.connect(RAIN_DB)
+    c = conn.cursor()
+    c.execute("""SELECT datetime FROM [rain_data]""")
+    print(c.fetchone())
+    
+    print(today)
+    print(yesterday)
+
+    c.execute("""SELECT datetime, intensity
+from [rain_data]
+where datetime >= '2019-07-10' AND datetime < '2019-07-12' """)
+    print(c.fetchall())
+    
     dedup = remove_dup(logs)
     seq_data = lump_sequential(dedup)
     
