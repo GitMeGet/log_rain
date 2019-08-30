@@ -76,19 +76,18 @@ def count_intervals(logs):
 
     return (a,b,c)
 
-# TODO: add parameter (hours_ago)
-def read_log_file():
-    today = datetime.now().isoformat(' ', 'seconds')
-    yesterday = (datetime.now() - timedelta(days=1)).isoformat(' ', 'seconds')
-    print(today)
-    print(yesterday)
+def read_log_file(hours_ago=24):
+    to_time = datetime.now().isoformat(' ', 'seconds')
+    from_time = (datetime.now() - timedelta(hours=hours_ago)).isoformat(' ', 'seconds')
+    print(to_time)
+    print(from_time)
 
     conn = sqlite3.connect(RAIN_DB)
     c = conn.cursor()
 
     c.execute("""SELECT datetime, intensity
 from [rain_data]
-where intensity != -1 AND datetime >= '{}' AND datetime < '{}' """.format(yesterday, today))
+where intensity != -1 AND datetime >= '{}' AND datetime < '{}' """.format(from_time, to_time))
     logs = c.fetchall()
     
     print(logs)
