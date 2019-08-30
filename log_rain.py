@@ -62,7 +62,14 @@ def main():
         conn.commit()
         conn.close()
         print("write ok")
-
+        
+        # delete row in db if too many rows
+        c.execute("SELECT COUNT(*) from rain_data")
+        (num_rows,) = c.fetchone()
+        
+        if num_rows > 1000:
+            c.execute("DELETE FROM rain_data WHERE rowid = (SELECT MIN(rowid) FROM rain_data)")
+        
         time.sleep(300) # sleep 5 mins
 
 if __name__ == "__main__":
