@@ -64,32 +64,40 @@ def lump_sequential(dedup):
             
     return triple_list
 
+def count_intervals(logs):
+    a = b = c = 0
+    for time, intensity in logs:
+        if intensity in range(0,32):
+            a += 1
+        elif intensity in range(33,66):
+            b += 1
+        elif intensity in range(67,100):
+            c += 1
+
+    return (a,b,c)
+
+# TODO: add parameter (hours_ago)
 def read_log_file():
     today = datetime.now().isoformat(' ', 'seconds')
     yesterday = (datetime.now() - timedelta(days=1)).isoformat(' ', 'seconds')
-
-    # read from folders "today" and "yesterday"
-    conn = sqlite3.connect(RAIN_DB)
-    c = conn.cursor()
-    c.execute("""SELECT datetime FROM [rain_data]""")
-    print(c.fetchone())
-    
     print(today)
     print(yesterday)
 
+    conn = sqlite3.connect(RAIN_DB)
+    c = conn.cursor()
+
     c.execute("""SELECT datetime, intensity
 from [rain_data]
-where datetime >= '2019-07-10' AND datetime < '2019-07-12' """)
-    print(c.fetchall())
+where intensity != -1 AND datetime >= '{}' AND datetime < '{}' """.format(yesterday, today))
+    logs = c.fetchall()
     
-    dedup = remove_dup(logs)
-    seq_data = lump_sequential(dedup)
+    print(logs)
+    a,b,c = count_intervals(logs)
+    print(c)
+    heavy_rain_hours = c * 5 / 60
     
-    ret_str = date_base_path + "\n"
-    ret_str += "start_time, duration, rain_intensity\n"
-    for triple in seq_data:
-        ret_str += str(triple) + "\n"
-        
+    ret_str = "last 24 hrs, {} hrs of heavy rain\n".format(heavy_rain_hours)
+
     return ret_str
         
 if __name__ == "__main__":
