@@ -60,7 +60,6 @@ def main():
         c.execute("INSERT INTO rain_data VALUES ('{}','{}','{}')".format(
             iso_datetime, json.dumps(rain_json), max_intensity))
         conn.commit()
-        conn.close()
         print("write ok")
         
         # delete row in db if too many rows
@@ -69,6 +68,9 @@ def main():
         
         if num_rows > 1000:
             c.execute("DELETE FROM rain_data WHERE rowid = (SELECT MIN(rowid) FROM rain_data)")
+
+        conn.commit()
+        conn.close()
         
         time.sleep(300) # sleep 5 mins
 
