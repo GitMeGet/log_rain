@@ -1,3 +1,5 @@
+Past rain data of the climbing areas in Dairy Farm Nature Park (Singapore) is displayed so that climbers won't make wasted trips in the case of extremely wet rock. Nonetheless, this is not a definitive measure and can only serve as a heuristic.
+
 ## run this on raspi zero w
 1) ssh into pi (use Fing to find raspi ip addr)
 - user: pi
