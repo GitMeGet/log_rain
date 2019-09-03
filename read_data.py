@@ -76,26 +76,26 @@ def count_intervals(logs):
 
     return (a,b,c)
 
-def read_log_file(hours_ago=24):
+def read_log_file(hours_ago=8):
     to_time = datetime.now().isoformat(' ', 'seconds')
     from_time = (datetime.now() - timedelta(hours=hours_ago)).isoformat(' ', 'seconds')
-    print(to_time)
-    print(from_time)
 
     conn = sqlite3.connect(RAIN_DB)
     c = conn.cursor()
-
     c.execute("""SELECT datetime, intensity
 from [rain_data]
 where intensity != -1 AND datetime >= '{}' AND datetime < '{}' """.format(from_time, to_time))
     logs = c.fetchall()
     
-    print(logs)
     a,b,c = count_intervals(logs)
-    print(c)
-    heavy_rain_hours = c * 5 / 60
+    heavy_rain_hours = c * 5
     
-    ret_str = "last 24 hrs, {} hrs of heavy rain\n".format(heavy_rain_hours)
+    ret_str = "last {} hrs, {} mins of heavy rain\n".format(hours_ago, heavy_rain_hours)
+
+    print(to_time)
+    print(from_time)
+    print(logs)
+    print(c)
 
     return ret_str
         

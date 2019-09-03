@@ -1,9 +1,8 @@
 token = '873581678:AAF0JY0SosaAOtJ1hxiYo1po38G1VRdfdGs'
 
 import logging
-
+import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-
 from read_data import read_log_file
 
 # Enable logging
@@ -12,28 +11,23 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-help_str = """for past weather, type: /how
-for more details, type: /details
-"""
-
-details_str = """Using rain cloud data (updated every 5 min) from NEA, this bot displays the times when those rain clouds intersect with a pre-defined boundaries of dairy farm climbing locations. Rain intensities range from 0 (light rain) - 100 (heavy rain)
+help_str = """Using rain cloud data (updated every 5 min) from NEA, this bot displays the times when those rain clouds intersect with a pre-defined boundaries of dairy farm climbing locations. Rain intensities range from 0 (light rain) - 100 (heavy rain)
 """
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(update, context):
     """Send a message when the command /start is issued."""
-    update.message.reply_text(help_str)
+    kb = [[telegram.KeyboardButton('/weather')]]
+    kb_markup = telegram.ReplyKeyboardMarkup(kb, resize_keyboard=True)
+    update.message.reply_text(help_str, reply_markup=kb_markup)
 
 def help(update, context):
     """Send a message when the command /help is issued."""
     update.message.reply_text(help_str)
     
-def how(update, context):
+def weather(update, context):
     update.message.reply_text(read_log_file())
-
-def details(update, context):
-    update.message.reply_text(details_str)
     
 def error(update, context):
     """Log Errors caused by Updates."""
@@ -52,8 +46,7 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
-    dp.add_handler(CommandHandler("how", how))    
-    dp.add_handler(CommandHandler("details", details))
+    dp.add_handler(CommandHandler("weather", weather))    
     
     # on noncommand i.e message
 #    dp.add_handler(MessageHandler(Filters.text, reply))
