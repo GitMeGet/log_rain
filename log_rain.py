@@ -72,7 +72,8 @@ def main():
         conn.commit()
         conn.close()
         
-        time.sleep(300) # sleep 5 mins
+        # check more frequently than NEA website updates (every 5 mins) to not miss data
+        time.sleep(150) 
 
 if __name__ == "__main__":
     main()
