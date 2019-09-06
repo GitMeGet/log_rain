@@ -6,19 +6,14 @@ RAIN_DB = "rain.db"
 
 def remove_dup(logs):
     """ Remove duplicate timings, only keep highest intensity for each timing
-        input: string
+        input: list of (time, intensity) tuples, possibly with duplicates
         output: list of (time, intensity) tuples
     """
-
-    # split by line, then comma
-    tuple_list = [(t.split(",")[0], t.split(",")[1]) for t in logs.splitlines()]
         
     dedup = list()
     curr_time = None
     curr_max = None
-    for time, intensity in tuple_list:
-        intensity = int(intensity)
-        
+    for time, intensity in logs:
         if curr_time == None and curr_max == None:
             curr_time = time
             curr_max = intensity
@@ -87,7 +82,9 @@ from [rain_data]
 where intensity != -1 AND datetime >= '{}' AND datetime < '{}' """.format(from_time, to_time))
     logs = c.fetchall()
     
-    a,b,c = count_intervals(logs)
+    dedupped = remove_dup(logs)
+    
+    a,b,c = count_intervals(dedupped)
     heavy_rain_hours = c * 5
     
     ret_str = "last {} hrs, {} mins of heavy rain\n".format(hours_ago, heavy_rain_hours)
